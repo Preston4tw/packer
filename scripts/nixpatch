@@ -1,0 +1,33 @@
+26,29c26,29
+<     Linux.x86_64) system=x86_64-linux; hash=ad10b4da69035a585fe89d7330037c4a5d867a372bb0e52a1542ab95aec67999;;
+<     Linux.i?86) system=i686-linux; hash=14b3b0c34971fb29f279164de83cae323ad443eb62529c368be38d5376bcb306;;
+<     Linux.aarch64) system=aarch64-linux; hash=96c37fcb852d1bea19df29d49268d2b2878a73fef8f61801eec1434b7adc8d5a;;
+<     Darwin.x86_64) system=x86_64-darwin; hash=938b2ab25fa344491eae51d8db7712028cc393b36a12250af7c5e87849631e0d;;
+---
+>     Linux.x86_64) system=x86_64-linux; hash=d6db178007014ed47ad5460c1bd5b2cb9403b1ec543a0d6507cb27e15358341f;;
+>     Linux.i?86) system=i686-linux; hash=b2e5b62a66c6d1951fdd5e01109680592b498ef40f28bfc790341f5b986ba34d;;
+>     Linux.aarch64) system=aarch64-linux; hash=248be69c25f599ac214bad1e4f4003e27f1da83cb17f7cd762746bd2c215a0df;;
+>     Darwin.x86_64) system=x86_64-darwin; hash=ec6279bb6d628867d82a6e751dac2bcb64ccea3194d753756a309f75fd704d4c;;
+33c33
+< url="https://nixos.org/releases/nix/nix-2.1.1/nix-2.1.1-$system.tar.bz2"
+---
+> tarball="/home/vagrant/nix-2.0.4-$system.tar.bz2"
+35,42c35
+< tarball="$tmpDir/$(basename "$tmpDir/nix-2.1.1-$system.tar.bz2")"
+< 
+< require_util curl "download the binary tarball"
+< require_util bzcat "decompress the binary tarball"
+< require_util tar "unpack the binary tarball"
+< 
+< echo "downloading Nix 2.1.1 binary tarball for $system from '$url' to '$tmpDir'..."
+< curl -L "$url" -o "$tarball" || oops "failed to download '$url'"
+---
+> echo "copying Nix 2.0.4 binary tarball for $system from $tarball to $tmpDir ..."
+51c44
+<     oops "cannot verify the SHA-256 hash of '$url'; you need one of 'shasum', 'sha256sum', or 'openssl'"
+---
+>     oops "cannot verify the SHA-256 hash of $tarball; you need one of 'shasum', 'sha256sum', or 'openssl'"
+60c53
+< < "$tarball" bzcat | tar -xf - -C "$unpack" || oops "failed to unpack '$url'"
+---
+> < "$tarball" bzcat | tar -xf - -C "$unpack" || oops "failed to unpack $tarball"

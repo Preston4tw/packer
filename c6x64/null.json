@@ -1,0 +1,36 @@
+{
+
+    "provisioners": [
+      {
+        "type": "shell",
+        "environment_vars": ["NEWUSERLOGIN={{ user `NEWUSERLOGIN` }}",
+                             "NEWUSERFULLNAME={{ user `NEWUSERFULLNAME` }}",
+                             "AWS_ACCESS_KEY_ID={{ user `AWS_ACCESS_KEY_ID`}}",
+                             "AWS_SECRET_ACCESS_KEY={{user `AWS_SECRET_ACCESS_KEY`}}",
+                             "AZURE_SECRET={{user `AZURE_SECRET`}}",
+			     "SVN_SERVER_URL={{user `SVN_SERVER_URL`}}"
+                            ],
+        "execute_command": "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}",
+        "scripts": [
+          "scripts/createuser.sh"
+        ]
+    },
+    {
+        "type": "file",
+        "source": "cache/nix-2.0.2-x86_64-linux.tar.bz2",
+        "destination": "nix-2.0.2-x86_64-linux.tar.bz2"
+      }
+    ],
+
+  "builders": [
+      {
+        "type":         "null",
+        "communicator": "ssh",
+        "ssh_timeout": "5s",
+        "ssh_host":     "192.168.9.13",
+        "ssh_username": "{{ user `NEWUSERLOGIN` }}",
+        "ssh_port": 22,
+        "ssh_password": "vagrant"
+      }
+  ]
+}

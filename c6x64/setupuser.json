@@ -1,0 +1,44 @@
+{
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} {{ .Path }}",
+      "environment_vars": [
+                           "NEWUSERLOGIN={{ user `NEWUSERLOGIN` }}",
+                           "NEWUSERFULLNAME={{ user `NEWUSERFULLNAME` }}",
+                           "AWS_ACCESS_KEY_ID={{ user `AWS_ACCESS_KEY_ID` }}",
+                           "AWS_SECRET_ACCESS_KEY={{user `AWS_SECRET_ACCESS_KEY` }}",
+                           "AZURE_SECRET={{user `AZURE_SECRET` }}",
+                           "SVN_SERVER_URL={{user `SVN_SERVER_URL` }}"
+       ],
+      "scripts": [
+        "scripts/setup_newuser.sh"
+      ]
+    }
+  ],
+  "builders": [
+    {
+      "type": "virtualbox-ovf",
+      "source_path": "c6x64-renameduser.ova",
+      "output_directory": "build/out",
+      "vm_name": "c6x64-newuser-final",
+      "boot_wait": "5s",
+      "format": "ova",
+      "guest_additions_mode": "disable",
+      "http_directory": "http",
+      "ssh_username": "{{ user `NEWUSERLOGIN` }}",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "10000s",
+      "shutdown_command": "echo 'rm -f /etc/ssh/ssh_host*; rm -f /tmp/shutdown.sh; /sbin/halt -h -p' > /tmp/shutdown.sh; sudo sh /tmp/shutdown.sh"
+
+    }
+],
+
+"post-processors": [
+    {
+      "type": "shell-local",
+      "command": "mv build/out/c6x64-newuser-final.ova . ; rm -rf build/*"
+    }
+]
+}

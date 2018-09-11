@@ -7,7 +7,7 @@ package-cleanup --oldkernels --count=1 -y
 yum -y clean all
 
 # Remove hardware specific udev rules so hardware is properly initialized when
-# being instanciated on new hardware. Without this networking can fail to come
+# being instantiated on new hardware. Without this networking can fail to come
 # up as the eth0 MAC address should have changed.
 rm -f /etc/udev/rules.d/70-*.rules
 # Remove other references to hardware specific things with repsect to networking

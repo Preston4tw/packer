@@ -2,41 +2,82 @@
   "provisioners": [
     {
       "type": "file",
-      "source": "cache/nix-2.0.2-x86_64-linux.tar.bz2",
-      "destination": "nix-2.0.2-x86_64-linux.tar.bz2"
-    },
-    {
-      "type": "file",
-      "source": "cache/ideaIC-2018.1.3.tar.gz",
-      "destination": "ideaIC-2018.1.3.tar.gz"
-    },
-    {
+      "source": "cache/nix-2.0.4-x86_64-linux.tar.bz2",
+      "destination": "nix-2.0.4-x86_64-linux.tar.bz2"
+  },
+  {
       "type": "file",
       "source": "cache/jdk-8u144-linux-x64.rpm",
       "destination": "jdk-8u144-linux-x64.rpm"
-    },
-    {
+  },
+
+  {
       "type": "file",
-      "source": "cache/netbeans-8.2-javase-linux.sh",
-      "destination": "netbeans-8.2-javase-linux.sh"
+      "source": "cache/VMwareTools-10.0.6-3595377.tar.gz",
+      "destination": "VMwareTools-10.0.6-3595377.tar.gz"
+  },
+
+  {
+     "type": "file",
+     "source": "cache/ideaIC-2018.1.6.tar.gz",
+     "destination": "ideaIC-2018.1.6.tar.gz"
+   },
+   {
+      "type": "file",
+      "source": "cache/netbeans-8.2-linux.sh",
+      "destination": "netbeans-8.2-linux.sh"
     },
     {
+        "type": "shell-local",
+        "command": "patch scripts/install-nix-2.0.4 < scripts/nixpatch"
+    },
+  {
       "type": "shell",
-      "execute_command": "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} {{ .Path }}",
       "scripts": [
-        "scripts/nix.sh",
-        "scripts/nix-chromium.sh",
-        "scripts/jdk.sh",
-        "scripts/netbeans.sh",
-        "scripts/intellij.sh",
-        "scripts/cleanup.sh"
-      ]
-    }
-  ],
+        "scripts/install-nix-2.0.4"
+    ]
+},
+{
+    "type": "shell-local",
+    "command": "patch -R scripts/install-nix-2.0.4 < scripts/nixpatch"
+},
+{
+    "type": "shell",
+    "environment_vars": [ "JDK_FILENAME={{user `JDK_FILENAME`}}" ],
+    "execute_command": "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}",
+    "scripts": [
+      "scripts/install_jdk.sh"
+  ]
+},
+{
+    "type": "shell",
+    "execute_command": "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}",
+    "scripts": [
+      "scripts/install_vmtools.sh"
+  ]
+},
+{
+    "type": "shell",
+    "environment_vars": [ "INTELLIJ_FILENAME={{ user `INTELLIJ_FILENAME` }}" ],
+    "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} {{ .Path }}",
+    "scripts": [
+      "scripts/install_intellij.sh"
+  ]
+},
+{
+    "type": "shell",
+    "environment_vars": [ "NETBEANS_FILENAME={{ user `NETBEANS_FILENAME` }}" ],
+    "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} {{ .Path }}",
+    "scripts": [
+      "scripts/install_netbeans.sh"
+  ]
+}
+],
   "builders": [
     {
       "type": "virtualbox-ovf",
-      "source_path": "build/c6x64-gui.ova",
+      "source_path": "c6x64-gui.ova",
       "output_directory": "build/out",
       "vm_name": "c6x64-gui-dev-java",
       "boot_wait": "5s",
@@ -47,15 +88,15 @@
       "ssh_password": "vagrant",
       "ssh_port": 22,
       "ssh_wait_timeout": "10000s",
-      "shutdown_command": "echo 'rm -f /etc/ssh/ssh_host*; rm -f /tmp/shutdown.sh; /sbin/halt -h -p' > /tmp/shutdown.sh; sudo sh /tmp/shutdown.sh",
-      "vboxmanage": [
-        [
-          "modifyvm",
-          "{{.Name}}",
-          "--memory",
-          "1024"
-        ]
-      ]
+      "shutdown_command": "echo 'rm -f /etc/ssh/ssh_host*; rm -f /tmp/shutdown.sh; /sbin/halt -h -p' > /tmp/shutdown.sh; sudo sh /tmp/shutdown.sh"
     }
-  ]
+],
+
+"post-processors": [
+    {
+      "type": "shell-local",
+      "command": "mv build/out/c6x64-gui-dev-java.ova . ; rm -rf build/*"
+  }
+]
+
 }

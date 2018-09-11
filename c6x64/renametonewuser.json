@@ -2,24 +2,27 @@
   "provisioners": [
     {
       "type": "shell",
-      "execute_command": "chmod +x {{ .Path }}; sudo {{ .Vars }} {{ .Path }}",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} {{ .Path }}",
+      "environment_vars": ["NEWUSERLOGIN={{ user `NEWUSERLOGIN` }}",
+                          "NEWUSERFULLNAME={{ user `NEWUSERFULLNAME` }}",
+                          "INTELLIJ_FILENAME={{ user `INTELLIJ_FILENAME` }}"
+                         ],
       "scripts": [
-        "scripts/centos-gui.sh",
-        "scripts/cleanup.sh"
+        "scripts/rename_user.sh"
       ]
     }
   ],
   "builders": [
     {
       "type": "virtualbox-ovf",
-      "source_path": "c6x64-kernel-ml-epel.ova",
+      "source_path": "c6x64-gui-dev-java.ova",
       "output_directory": "build/out",
-      "vm_name": "c6x64-gui",
+      "vm_name": "c6x64-renameduser",
       "boot_wait": "5s",
       "format": "ova",
       "guest_additions_mode": "disable",
       "http_directory": "http",
-      "ssh_username": "vagrant",
+      "ssh_username": "root",
       "ssh_password": "vagrant",
       "ssh_port": 22,
       "ssh_wait_timeout": "10000s",
@@ -28,8 +31,10 @@
     }
 ],
 
-"post-processors": [{
+"post-processors": [
+    {
       "type": "shell-local",
-      "command": "mv build/out/c6x64-gui.ova . ; rm -rf build/*"
-  }]
+      "command": "mv build/out/c6x64-renameduser.ova . ; rm -rf build/*"
+    }
+]
 }

@@ -14,6 +14,7 @@ rootpw vagrant
 # user is given sudo in %post
 user --name=vagrant --password=vagrant
 
+
 # US + UTC
 keyboard us
 lang en_US.UTF-8
@@ -46,9 +47,9 @@ selinux --disabled
 zerombr
 # Really disable selinux
 bootloader --location=mbr --append="selinux=0"
+
 # Create a single ext4 partition covering the entire disk
 clearpart --all
-
 # part / --fstype=ext4 --grow --asprimary --size=1
 
 part /boot --fstype ext4 --size=1024
@@ -79,6 +80,7 @@ chvt 3
 yum -y update
 # Install man pages
 yum -y install yum-utils man man-pages
+yum -y install xorg-x11-drv-vmware
 
 # Disable graphical boot
 sed -i '/^splashimage/d' /boot/grub/grub.conf

@@ -7,6 +7,7 @@
       "scripts": [
         "scripts/elrepo-kernel-ml.sh",
         "scripts/epel.sh",
+        "scripts/install_ansible.sh",
         "scripts/cleanup.sh"
       ]
     }
@@ -14,7 +15,7 @@
   "builders": [
     {
       "type": "virtualbox-ovf",
-      "source_path": "build/c6x64-minimal.ova",
+      "source_path": "c6x64-minimal.ova",
       "output_directory": "build/out",
       "vm_name": "c6x64-kernel-ml-epel",
       "boot_wait": "5s",
@@ -26,14 +27,11 @@
       "ssh_port": 22,
       "ssh_wait_timeout": "10000s",
       "shutdown_command": "echo 'rm -f /etc/ssh/ssh_host*; rm -f /tmp/shutdown.sh; /sbin/halt -h -p' > /tmp/shutdown.sh; sudo sh /tmp/shutdown.sh",
-      "vboxmanage": [
-        [
-          "modifyvm",
-          "{{.Name}}",
-          "--memory",
-          "1024"
-        ]
-      ]
+      "post_shutdown_delay" : "2m"
     }
-  ]
+],
+"post-processors": [{
+      "type": "shell-local",
+      "command": "mv build/out/c6x64-kernel-ml-epel.ova . ; rm -rf build/*"
+  }]
 }
